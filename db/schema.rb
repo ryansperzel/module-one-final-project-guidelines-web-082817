@@ -10,21 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170912142113) do
+ActiveRecord::Schema.define(version: 20170912020523) do
 
   create_table "bets", force: :cascade do |t|
     t.integer "bettor_id"
     t.integer "team_id"
-    t.integer "amount"
   end
 
   create_table "bettors", force: :cascade do |t|
     t.string "name"
+    t.integer "tokens"
   end
 
   create_table "teams", force: :cascade do |t|
     t.string "name"
-    t.integer "tokens"
   end
 
 end

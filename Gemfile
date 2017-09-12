@@ -6,3 +6,4 @@ gem "sqlite3"
 gem "pry"
 gem "require_all"
 gem 'unirest'
+gem 'colorize'
