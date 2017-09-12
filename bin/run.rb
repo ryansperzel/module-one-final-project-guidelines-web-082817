@@ -5,7 +5,7 @@ welcome
 players
 match
 
-# binding pry
+binding pry
 
 
 

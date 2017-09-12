@@ -1,4 +1,6 @@
 require 'unirest'
+require 'colorize'
+require 'colorized_string'
 
 $p1 = ""
 match_up = []
@@ -21,7 +23,7 @@ def create_teams
 end
 
 def welcome
-  puts "Welcome to the World Cup!
+  puts "Welcome to the World Cup!\n\n
   ░░░░░░▄███████████▀▀▀█▄▄░░░░░░░░
 ░░░░▄██████████▀░░░░░░░▀▀██▄░░░░
 ░░▄█▀▀▀▀▀▀▀██▀░░░░░░░░░░░░███▄░░
@@ -37,10 +39,14 @@ def welcome
 █▄░░░░░░░░░░░▄█░░░░░░░░░░░░▄██▀░
 ░▀█▄░░░░░░░░░█░░░░░░░░░░░░███▀░░
 ░░░▀▀█▄▄▄▄▄▄██░░░░░░░░░░░██▀░░░░
-░░░░░░░▀▀██████▄▄░░░░░▄▄█▀░░░░░░"
-  puts "What is your name Player One?"
+░░░░░░░▀▀██████▄▄░░░░░▄▄█▀░░░░░░
+\n\n"
+
+
+  puts "What is your name Player One?".colorize(:red)
   $p1 = gets.chomp
-  puts "What is yout name Player Two"
+
+  puts "\n\n\n\nWhat is yout name Player Two".colorize(:blue)
   $p2 = gets.chomp
 
 end
@@ -62,15 +68,24 @@ end
 
 def match
   round_counter = 1
+
   while round_counter <= 5
     team_1 = random_team
     team_2 = random_team
-    puts "The following are the available games to bet on:"
-    puts "#{team_1["title"]} vs. #{team_2["title"]}"
-    puts "Enter the name of the tean you are placing your bet on Player One."
+
+    puts "\n\n\nThe following are the available games to bet on:\n\n\n"
+    sleep(1)
+    puts "#{team_1["title"]}\n\n"
+    sleep(1)
+    puts "vs."
+    sleep(1)
+    puts "\n\n#{team_2["title"]}"
+    puts "\n\n\n#{$p1}: choose your team".colorize(:red)
     team = gets.chomp
-    puts "Enter the name of the tean you are placing your bet on Player Two."
+
+    puts "\n\n\n#{$p2}: choose your team".colorize(:blue)
     team2 = gets.chomp
+
     tid = find_team(team)["id"]
     tid2 = find_team(team2)["id"]
     Bet.create(:bettor_id => $p1_inst[:id], :team_id => tid)
@@ -78,29 +93,36 @@ def match
     array = [team_1["id"], team_2["id"]]
     winner = array.sample
 
-    if winner == tid
-      puts "Player 1 won the round!"
-    else
-      $p1_inst.update(tokens:($p1_inst["tokens"]-20))
-      if $p1_inst["tokens"] > 0
-        puts "Player 1 lost the round"
-      else
-        puts "GAME OVER PLAYER ONE!"
+    if winner == tid && winner == tid2
+      puts "BOTH PLAYERS WON THE ROUND!"
+    elsif winner == tid && winner != tid2
+      puts "Player 1 won the round!".colorize(:red)
+      sleep(3)
+      $p2_inst.update(tokens:($p2_inst["tokens"]-10))
+      if $p2_inst["tokens"] <= 0
+        puts "PLAYER ONE WON THE GAME!".colorize(:red)
         break
       end
-    end
-
-    if winner == tid2
-      puts "Player 1 won the round!"
-    else
-      $p2_inst.update(tokens:($p2_inst["tokens"]-20))
-      if $p2_inst["tokens"] > 0
-        puts "Player 2 lost the round"
-      else
-        puts "GAME OVER PLAYER TWO!"
+    elsif winner == tid2 && winner != tid
+      puts "Player 2 won the round!".colorize(:blue)
+      sleep(3)
+      $p1_inst.update(tokens:($p1_inst["tokens"]-10))
+      if $p1_inst["tokens"] <= 0
+        puts "PLAYER TWO WON THE GAME!".colorize(:blue)
         break
       end
+    else
+      winner != tid && winner != tid2
+      puts "BOTH PLAYERS LOST THE ROUND!"
+      $p1_inst.update(tokens:($p1_inst["tokens"]-10))
+      $p2_inst.update(tokens:($p2_inst["tokens"]-10))
     end
+    total_score
     round_counter += 1
   end
+end
+
+def total_score
+  puts "#{$p1} Total: #{$p1_inst[:tokens]}"
+  puts "#{$p2} Total: #{$p2_inst[:tokens]}"
 end
