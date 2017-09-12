@@ -1,5 +1,7 @@
 require 'unirest'
 
+$p1 = ""
+
 def team_data
   response = Unirest.get "https://montanaflynn-fifa-world-cup.p.mashape.com/teams",
     headers:{
@@ -19,16 +21,26 @@ end
 
 def welcome
   puts "Welcome! What is your full name?"
-  full_name = gets.chomp
-  bettors.create(:name => full_name, :tokens => 20)
+  $p1 = gets.chomp
 end
 
-def menu
+def player_one
+  $p1_inst = Bettor.create(:name => $p1)
+end
+
+
+
+def find_team(team)
+  team_data.body.find do |team_ob|
+    team_ob["title"] == team
+  end
+end
+
+def match
   puts "The following are the available games to bet on:"
   puts "#{team_data.body[rand(0..222)]["title"]} vs. #{team_data.body[rand(0..222)]["title"]}"
-end
-
-def select_team
-  puts "Please select a team to place a bet on"
-  gets.chomp
+  puts "Enter the name of the tean you are placing your bet on."
+  team = gets.chomp
+  tid = find_team(team)["id"]
+  Bet.create(:bettor_id => $p1_inst[:id], :team_id => tid)
 end

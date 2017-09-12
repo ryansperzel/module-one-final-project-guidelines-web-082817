@@ -1,13 +1,14 @@
 require_relative '../config/environment'
 
 
+welcome
 
-# welcome
-# menu
-# select_team
-
-create_teams
+player_one
+match
 
 binding pry
+
+
+
 
 puts "cool"
