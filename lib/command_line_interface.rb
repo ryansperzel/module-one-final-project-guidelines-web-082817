@@ -9,18 +9,23 @@ def team_data
     }
 end
 
-# puts response.body[rand(0..222)]["title"]
-
+def create_teams
+  i = 0
+  while i < 222
+    Team.create(:name => team_data.body[i]["title"])
+    i += 1
+  end
+end
 
 def welcome
-  puts "Welcome! Let's bet on some World Cup matches!"
+  puts "Welcome! What is your full name?"
+  full_name = gets.chomp
+  bettors.create(:name => full_name, :tokens => 20)
 end
 
 def menu
   puts "The following are the available games to bet on:"
-  5.times do
-    puts "#{team_data.body[rand(0..222)]["title"]} vs. #{team_data.body[rand(0..222)]["title"]}"
-  end 
+  puts "#{team_data.body[rand(0..222)]["title"]} vs. #{team_data.body[rand(0..222)]["title"]}"
 end
 
 def select_team
