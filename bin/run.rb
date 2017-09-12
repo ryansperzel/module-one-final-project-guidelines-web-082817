@@ -1,9 +1,8 @@
 require_relative '../config/environment'
 
-
 welcome
 
-player_one
+players
 match
 
 # binding pry

@@ -21,14 +21,34 @@ def create_teams
 end
 
 def welcome
-  puts "Welcome! What is your full name?"
+  puts "Welcome to the World Cup!
+  ░░░░░░▄███████████▀▀▀█▄▄░░░░░░░░
+░░░░▄██████████▀░░░░░░░▀▀██▄░░░░
+░░▄█▀▀▀▀▀▀▀██▀░░░░░░░░░░░░███▄░░
+▄█▀░░░░░░░░░█▄░░░░░░░░░░░░░████░
+▀░░░░░░░░░░░░█▄░░░░░░░░░░░▄█████
+▄▄░░░░░░░░░░░░▀█▄▄▄▄▄▄░▄█▀▀░░▀██
+███░░░░░░░░░░░█████████▀░░░░░░░▀
+███▄░░░░░░░░▄███████████░░░░░░░░
+████▄▄▄▄▄▄▄█████████████░░░░░░░░
+███▀░░░░░░░█████████████░░░░░░░░
+███░░░░░░░░░▀██████████▀▀▄░░░░░█
+░░░░░░░░░░░░░░██████▀▀░░░░▀▄░▄██
+█▄░░░░░░░░░░░▄█░░░░░░░░░░░░▄██▀░
+░▀█▄░░░░░░░░░█░░░░░░░░░░░░███▀░░
+░░░▀▀█▄▄▄▄▄▄██░░░░░░░░░░░██▀░░░░
+░░░░░░░▀▀██████▄▄░░░░░▄▄█▀░░░░░░"
+  puts "What is your name Player One?"
   $p1 = gets.chomp
+  puts "What is yout name Player Two"
+  $p2 = gets.chomp
+
 end
 
-def player_one
-  $p1_inst = Bettor.create(:name => $p1)
+def players
+  $p1_inst = Bettor.create(:name => $p1, :tokens => 20)
+  $p2_inst = Bettor.create(:name => $p2, :tokens => 20)
 end
-
 
 def find_team(team)
   team_data.body.find do |team_ob|
@@ -41,21 +61,46 @@ def random_team
 end
 
 def match
-  team_1 = random_team
-  team_2 = random_team
-  puts "The following are the available games to bet on:"
-  puts "#{team_1["title"]} vs. #{team_2["title"]}"
-  puts "Enter the name of the tean you are placing your bet on."
-  team = gets.chomp
-  tid = find_team(team)["id"]
-  Bet.create(:bettor_id => $p1_inst[:id], :team_id => tid)
-  array = [team_1["id"], team_2["id"]]
-  winner = array.sample
+  round_counter = 1
+  while round_counter <= 5
+    team_1 = random_team
+    team_2 = random_team
+    puts "The following are the available games to bet on:"
+    puts "#{team_1["title"]} vs. #{team_2["title"]}"
+    puts "Enter the name of the tean you are placing your bet on Player One."
+    team = gets.chomp
+    puts "Enter the name of the tean you are placing your bet on Player Two."
+    team2 = gets.chomp
+    tid = find_team(team)["id"]
+    tid2 = find_team(team2)["id"]
+    Bet.create(:bettor_id => $p1_inst[:id], :team_id => tid)
+    Bet.create(:bettor_id => $p2_inst[:id], :team_id => tid2)
+    array = [team_1["id"], team_2["id"]]
+    winner = array.sample
 
-  binding.pry
-  if winner == tid
-    puts "It Works"
-  else
-    puts "You lose"
+    if winner == tid
+      puts "Player 1 won the round!"
+    else
+      $p1_inst.update(tokens:($p1_inst["tokens"]-20))
+      if $p1_inst["tokens"] > 0
+        puts "Player 1 lost the round"
+      else
+        puts "GAME OVER PLAYER ONE!"
+        break
+      end
+    end
+
+    if winner == tid2
+      puts "Player 1 won the round!"
+    else
+      $p2_inst.update(tokens:($p2_inst["tokens"]-20))
+      if $p2_inst["tokens"] > 0
+        puts "Player 2 lost the round"
+      else
+        puts "GAME OVER PLAYER TWO!"
+        break
+      end
+    end
+    round_counter += 1
   end
 end
