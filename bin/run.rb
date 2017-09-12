@@ -6,7 +6,7 @@ welcome
 player_one
 match
 
-binding pry
+# binding pry
 
 
 
