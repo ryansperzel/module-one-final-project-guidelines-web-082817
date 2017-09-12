@@ -2,7 +2,9 @@ require_relative '../config/environment'
 
 welcome
 
-players
+count = player_count
+
+add_player(count)
 match
 
 <<<<<<< HEAD
