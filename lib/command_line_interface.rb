@@ -6,6 +6,7 @@ require 'colorized_string'
 $players_array = []
 
 
+
 def team_data
   response = Unirest.get "https://montanaflynn-fifa-world-cup.p.mashape.com/teams",
     headers:{
@@ -25,7 +26,8 @@ end
 
 def welcome
   puts "Welcome to the World Cup!\n\n
-  ░░░░░░▄███████████▀▀▀█▄▄░░░░░░░░
+
+░░░░░░░░▄███████████▀▀▀█▄▄░░░░░░
 ░░░░▄██████████▀░░░░░░░▀▀██▄░░░░
 ░░▄█▀▀▀▀▀▀▀██▀░░░░░░░░░░░░███▄░░
 ▄█▀░░░░░░░░░█▄░░░░░░░░░░░░░████░
@@ -55,13 +57,17 @@ end
 def player_count
   puts "How many players are playing?"
   response = gets.chomp
+  until response.to_i != 0
+    puts "Invalid response, please pick a number."
+    response = gets.chomp
+  end
   response.to_i
 end
 
 def add_player(player_count)
   counter = 0
   while counter < player_count
-    puts "What is your name?"
+    puts "\n\nWhat is your name?"
     name = gets.chomp
     new_player = Bettor.create(:name => name, :tokens => 20)
     $players_array << new_player
@@ -80,25 +86,34 @@ def random_team
   team_data.body[rand(0..222)]
 end
 
+def colors
+  color_codes.keys
+end
+
 def match
+
   round_counter = 1
   player_team = {}
 
-  while round_counter <= 5
+  until $players_array.length <= 1 || round_counter == 10
     team_1 = random_team
     team_2 = random_team
 
     puts "\n\n\nThe following are the available games to bet on:\n\n\n"
     sleep(1)
-    puts "#{team_1["title"]}\n\n"
+    puts "#{team_1["title"].bold}\n\n"
     sleep(1)
     puts "vs."
     sleep(1)
-    puts "\n\n#{team_2["title"]}"
+    puts "\n\n#{team_2["title"].bold}"
 
     $players_array.each do |player|
-      puts "#{player[:name]}: pick a team".colorize(:blue)
+      puts "\n\n\n#{player[:name].bold}: pick a team".colorize(:blue)
       team = gets.chomp
+      until team == team_1["title"] || team == team_2["title"]
+        puts "That team isn't playing! Please pick a team from above\n\n"
+        team = gets.chomp
+      end
       player_team[player[:id]] = find_team(team)["id"]
     end
 
@@ -109,40 +124,97 @@ def match
     array = [team_1["id"], team_2["id"]]
     winner = array.sample
 
-    # binding pry
-  #   if winner == tid && winner == tid2
-  #     puts "BOTH PLAYERS WON THE ROUND!"
-  #   elsif winner == tid && winner != tid2
-  #     puts "Player 1 won the round!".colorize(:red)
-  #     sleep(3)
-  #     $p2_inst.update(tokens:($p2_inst["tokens"]-10))
-  #     if $p2_inst["tokens"] <= 0
-  #       puts "PLAYER ONE WON THE GAME!".colorize(:red)
-  #       break
-  #     end
-  #   elsif winner == tid2 && winner != tid
-  #     puts "Player 2 won the round!".colorize(:blue)
-  #     sleep(3)
-  #     $p1_inst.update(tokens:($p1_inst["tokens"]-10))
-  #     if $p1_inst["tokens"] <= 0
-  #       puts "PLAYER TWO WON THE GAME!".colorize(:blue)
-  #       break
-  #     end
-  #   else
-  #     winner != tid && winner != tid2
-  #     puts "BOTH PLAYERS LOST THE ROUND!"
-  #     $p1_inst.update(tokens:($p1_inst["tokens"]-10))
-  #     $p2_inst.update(tokens:($p2_inst["tokens"]-10))
-  #   end
-  #   total_score
-  binding.pry
-  counter += 1
+    winners = get_winning_bets(winner)
 
-  puts "poo"
+    $players_array.each do |player|
+      if outcomes(winners).include?(player[:id])
+        sleep(1)
+        puts "\n\n\n#{player[:name].blue.bold} won their bet and moves on!"
+      else
+        sleep(1)
+        puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 5 tokens!"
+        player.update(tokens:(player["tokens"]-5))
+        if player[:tokens] <= 0
+          sleep(1)
+          puts "\n\n\n#{player[:name].blue.bold} has no more tokens and has been eliminated from the game!"
+        end
+      end
+    end
+
+    $players_array.delete_if do |player|
+      player[:tokens] <= 0
+    end
+
+    puts "\n\n\n_________________________________________________________________________\nCURRENT TOTALS:\n\n".bold
+
+    total_score
+
+    puts "\n\n\n_________________________________________________________________________\n\n\n"
+
+  round_counter += 1
+
   end
 end
 
+
+def game_winner
+  if $players_array.length == 1
+    sleep(3)
+    puts "\n\n\nCongrats #{$players_array.first[:name].blue.bold} you won the game!\n\n\n".yellow.blink
+  elsif $players_array.length == 0
+    sleep(3)
+    puts "\n\n\nYOU ALL LOSE!".red.blink
+  elsif $players_array.length > 1
+    current_high
+  end
+end
+
+
 def total_score
-  puts "#{$p1} Total: #{$p1_inst[:tokens]}"
-  puts "#{$p2} Total: #{$p2_inst[:tokens]}"
+  sleep(1)
+  counter = 0
+  while counter < $players_array.size do
+    puts "\n\n\n#{$players_array[counter][:name].blue.bold} Total: #{$players_array[counter][:tokens]}"
+    counter += 1
+  end
+end
+
+
+def current_high
+  sorted_tokens = $players_array.sort_by do |player|
+    player[:token]
+  end
+
+  token_high = sorted_tokens.first[:token]
+  winner_names = []
+  $players_array.each do |player|
+    if player[:token] == token_high
+      winner_names << player[:name]
+    end
+  end
+  puts "GAME OVER\n\n\n"
+  sleep(3)
+  puts "CALCULATING WINNERS\n\n\n"
+  sleep(1)
+  "\n\n."
+  sleep(1)
+  "\n\n."
+  sleep(1)
+  "\n\n."
+  sleep(2)
+  puts "#{winner_names.join(' & ')} tied!".green.blink
+end
+
+
+def get_winning_bets(winner)
+  Bet.all.select do |bet_obj|
+    bet_obj[:team_id] == winner
+  end
+end
+
+
+def outcomes(winners)
+  winners.map do |winner_ob|
+    winner_ob[:bettor_id]
+  end
 end

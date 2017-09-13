@@ -2,11 +2,20 @@ require_relative '../config/environment'
 
 welcome
 
+puts "_________________________________________________________________________\n\n\n"
+# binding pry
 count = player_count
 
-add_player(count)
-match
 
+
+add_player(count)
+
+puts "\n\n\n_________________________________________________________________________\n\n\n"
+match
+puts "\n\n\n_________________________________________________________________________\n\n\n"
+game_winner
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 def trophy
   puts
@@ -80,6 +89,8 @@ end
 trophy
 =======
 binding pry
+=======
+>>>>>>> 229168b5919045d4dbb3b1936cda16cdaab64ca1
 
 >>>>>>> 1854659a319380f78cf31ade1ab7b8ba29312e9c
 
