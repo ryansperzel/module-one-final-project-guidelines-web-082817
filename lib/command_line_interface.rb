@@ -109,6 +109,27 @@ def match
     array = [team_1["id"], team_2["id"]]
     winner = array.sample
 
+    winners = get_winning_bets(winner)
+
+    # $players_array.each do |player|
+    #   if winners.include?(player)
+    #     puts "#{player[:name]} won their bet and moves on!"
+    #   else
+    #     puts "#{player[:name]} lost their and loses 5 tokens!"
+    #   end
+    # end
+
+    $players_array.each do |player|
+      if outcomes(winners).include?(player[:id])
+        puts "#{player[:name]} won their bet and moves on!"
+      else
+        puts "#{player[:name]} lost their bet and loses 5 tokens!"
+        player.update(tokens:(player["tokens"]-5))
+      end
+    end
+
+    total_score
+
     # binding pry
   #   if winner == tid && winner == tid2
   #     puts "BOTH PLAYERS WON THE ROUND!"
@@ -143,6 +164,21 @@ def match
 end
 
 def total_score
-  puts "#{$p1} Total: #{$p1_inst[:tokens]}"
-  puts "#{$p2} Total: #{$p2_inst[:tokens]}"
+  counter = 0
+  while counter < $players_array.size do
+    puts "#{$players_array[counter][:name]} Total: #{$players_array[counter][:tokens]}"
+    counter += 1
+  end
+end
+
+def get_winning_bets(winner)
+  Bet.all.select do |bet_obj|
+    bet_obj[:team_id] == winner
+  end
+end
+
+def outcomes(winners)
+  winners.map do |winner_ob|
+    winner_ob[:bettor_id]
+  end
 end
