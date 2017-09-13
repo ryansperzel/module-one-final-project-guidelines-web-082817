@@ -2,7 +2,6 @@ require_relative '../config/environment'
 require 'catpix'
 
 
-
 welcome
 
 puts "_________________________________________________________________________\n\n\n"

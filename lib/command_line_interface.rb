@@ -26,9 +26,12 @@ def create_teams
 end
 
 def welcome
-  puts "Welcome to the World Cup!"
+  puts "Welcome to the World Cup!".bold
 
   fifa_logo
+  pid = fork{ exec 'afplay', "audio/cheer.mp3" }
+  # pid = fork{ exec 'killall', "afhplay" }
+  # 'afplay audio/cheer.mp3`
 end
 
 def player_count
@@ -63,6 +66,7 @@ def random_team
   team_data.body[rand(0..222)]
 end
 
+
 def colors
   color_codes.keys
 end
@@ -78,6 +82,7 @@ def match
 
     puts "\n\n\nThe following are the available games to bet on:\n\n\n"
     sleep(1)
+    pid = fork{ exec 'afplay', "audio/whistle.wav" }
     puts "#{team_1["title"].bold}\n\n"
     sleep(1)
     puts "vs."
@@ -103,6 +108,8 @@ def match
 
     winners = get_winning_bets(winner)
 
+    # [fifa_logo(team_1), red_card(team_2)].sample
+
     $players_array.each do |player|
       if outcomes(winners).include?(player[:id])
         sleep(1)
@@ -110,7 +117,7 @@ def match
       else
         sleep(1)
         puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 5 tokens!"
-        player.update(tokens:(player["tokens"]-5))
+        player.update(tokens:(player["tokens"]-20))
         if player[:tokens] <= 0
           sleep(1)
           puts "\n\n\n#{player[:name].blue.bold} has no more tokens and has been eliminated from the game!"
@@ -137,7 +144,9 @@ end
 def game_winner
   if $players_array.length == 1
     sleep(3)
-    puts "\n\n\nCongrats #{$players_array.first[:name].blue.bold} you won the game!\n\n\n".yellow.blink
+    puts "\n\n\n*****************************\nCongrats #{$players_array.first[:name].blue.bold} you won the game!\n*****************************\n\n\n".yellow.blink
+    trophy
+    puts "\n\n\n*****************************\nCongrats #{$players_array.first[:name].blue.bold} you won the game!\n*****************************\n\n\n".yellow.blink
   elsif $players_array.length == 0
     sleep(3)
     puts "\n\n\nYOU ALL LOSE!".red.blink
@@ -179,6 +188,7 @@ def current_high
   "\n\n."
   sleep(2)
   puts "#{winner_names.join(' & ')} tied!".green.blink
+  trophy
 end
 
 
@@ -196,6 +206,7 @@ def outcomes(winners)
 end
 
 def fifa_logo
+  # puts "#{team_1['title']} scores a penalty kick!"
   Catpix::print_image "lib/fifa.jpg",
     :limit_x => 0.75,
     :limit_y => 0.75,
@@ -205,3 +216,33 @@ def fifa_logo
     :bg_fill => false,
     :resolution => "high"
 end
+
+def trophy
+  Catpix::print_image "lib/trophy.png",
+    :limit_x => 0.5,
+    :limit_y => 0.5,
+    :center_x => false,
+    :center_y => false,
+    :bg => "white",
+    :bg_fill => false,
+    :resolution => "low"
+end
+
+# def red_card(team_2)
+#   puts "#{team_2['title']} gets a red card and they are down a man!"
+#   Catpix::print_image "lib/red_card.png",
+#     :limit_x => 0.75,
+#     :limit_y => 0.75,
+#     :center_x => false,
+#     :center_y => false,
+#     :bg => "white",
+#     :bg_fill => false,
+#     :resolution => "low"
+# end
+#
+#
+#
+# def events(team_1, team_2)
+#   [fifa_logo(team_1), red_card(team_2)].sample
+#   # event_array[0]
+# end
