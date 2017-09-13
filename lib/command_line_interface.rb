@@ -1,6 +1,7 @@
 require 'unirest'
 require 'colorize'
 require 'colorized_string'
+require 'catpix'
 
 # $p1 = ""
 $players_array = []
@@ -25,33 +26,9 @@ def create_teams
 end
 
 def welcome
-  puts "Welcome to the World Cup!\n\n
+  puts "Welcome to the World Cup!"
 
-░░░░░░░░▄███████████▀▀▀█▄▄░░░░░░
-░░░░▄██████████▀░░░░░░░▀▀██▄░░░░
-░░▄█▀▀▀▀▀▀▀██▀░░░░░░░░░░░░███▄░░
-▄█▀░░░░░░░░░█▄░░░░░░░░░░░░░████░
-▀░░░░░░░░░░░░█▄░░░░░░░░░░░▄█████
-▄▄░░░░░░░░░░░░▀█▄▄▄▄▄▄░▄█▀▀░░▀██
-███░░░░░░░░░░░█████████▀░░░░░░░▀
-███▄░░░░░░░░▄███████████░░░░░░░░
-████▄▄▄▄▄▄▄█████████████░░░░░░░░
-███▀░░░░░░░█████████████░░░░░░░░
-███░░░░░░░░░▀██████████▀▀▄░░░░░█
-░░░░░░░░░░░░░░██████▀▀░░░░▀▄░▄██
-█▄░░░░░░░░░░░▄█░░░░░░░░░░░░▄██▀░
-░▀█▄░░░░░░░░░█░░░░░░░░░░░░███▀░░
-░░░▀▀█▄▄▄▄▄▄██░░░░░░░░░░░██▀░░░░
-░░░░░░░▀▀██████▄▄░░░░░▄▄█▀░░░░░░
-\n\n"
-
-
-  # puts "What is your name Player One?".colorize(:red)
-  # $p1 = gets.chomp
-  #
-  # puts "\n\n\n\nWhat is yout name Player Two".colorize(:blue)
-  # $p2 = gets.chomp
-
+  fifa_logo
 end
 
 def player_count
@@ -216,4 +193,15 @@ def outcomes(winners)
   winners.map do |winner_ob|
     winner_ob[:bettor_id]
   end
+end
+
+def fifa_logo
+  Catpix::print_image "lib/fifa.jpg",
+    :limit_x => 0.75,
+    :limit_y => 0.75,
+    :center_x => false,
+    :center_y => false,
+    :bg => "white",
+    :bg_fill => false,
+    :resolution => "high"
 end
