@@ -108,7 +108,25 @@ def match
 
     winners = get_winning_bets(winner)
 
-    # [fifa_logo(team_1), red_card(team_2)].sample
+    word_array = ["#{team_1['title']} scores a penalty kick!", "#{team_2['title']} gets a red card and they are down a man!", "#{team_1['title']} captain gets hurt and leaves the game.", "Game delayed by fan running onto the field.", "Score is tied at the end of the second half and goes into extra time."]
+
+    sleep(1)
+    puts "\n\n.."
+    sleep(1)
+    puts "\n\n..."
+    sleep(1)
+    puts "\n\n...."
+    sleep(1)
+
+    puts word_array.sample
+
+    sleep(1)
+    puts "\n\n.."
+    sleep(1)
+    puts "\n\n..."
+    sleep(1)
+    puts "\n\n...."
+    sleep(1)
 
     $players_array.each do |player|
       if outcomes(winners).include?(player[:id])
@@ -181,11 +199,11 @@ def current_high
   sleep(3)
   puts "CALCULATING WINNERS\n\n\n"
   sleep(1)
-  "\n\n."
+  puts "\n\n."
   sleep(1)
-  "\n\n."
+  puts "\n\n."
   sleep(1)
-  "\n\n."
+  puts "\n\n."
   sleep(2)
   puts "#{winner_names.join(' & ')} tied!".green.blink
   trophy
@@ -206,7 +224,6 @@ def outcomes(winners)
 end
 
 def fifa_logo
-  # puts "#{team_1['title']} scores a penalty kick!"
   Catpix::print_image "lib/fifa.jpg",
     :limit_x => 0.75,
     :limit_y => 0.75,
@@ -228,8 +245,8 @@ def trophy
     :resolution => "low"
 end
 
-# def red_card(team_2)
-#   puts "#{team_2['title']} gets a red card and they are down a man!"
+
+# def red_card
 #   Catpix::print_image "lib/red_card.png",
 #     :limit_x => 0.75,
 #     :limit_y => 0.75,
@@ -239,10 +256,25 @@ end
 #     :bg_fill => false,
 #     :resolution => "low"
 # end
-#
-#
-#
-# def events(team_1, team_2)
-#   [fifa_logo(team_1), red_card(team_2)].sample
-#   # event_array[0]
-# end
+
+
+
+
+
+
+def run
+  welcome
+
+  puts "_________________________________________________________________________\n\n\n"
+  # binding pry
+  count = player_count
+
+
+
+  add_player(count)
+
+  puts "\n\n\n_________________________________________________________________________\n\n\n"
+  match
+  puts "\n\n\n_________________________________________________________________________\n\n\n"
+  game_winner
+end
