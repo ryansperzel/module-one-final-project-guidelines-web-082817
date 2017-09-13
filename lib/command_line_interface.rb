@@ -169,7 +169,6 @@ def game_winner
   end
 end
 
-
 def total_score
   sleep(1)
   counter = 0
