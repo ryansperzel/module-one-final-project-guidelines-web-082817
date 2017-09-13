@@ -1,4 +1,7 @@
 require_relative '../config/environment'
+require 'catpix'
+
+
 
 welcome
 

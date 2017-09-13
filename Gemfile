@@ -7,3 +7,5 @@ gem "pry"
 gem "require_all"
 gem 'unirest'
 gem 'colorize'
+gem 'catpix'
+gem 'rmagick'
