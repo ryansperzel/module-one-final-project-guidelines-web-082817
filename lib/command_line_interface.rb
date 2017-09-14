@@ -25,12 +25,11 @@ def create_teams
 end
 
 def welcome
-  binding.pry
   $players_array.clear
   puts "Welcome to the World Cup!".bold
 
   fifa_logo
-  pid = fork{ exec 'afplay', "audio/cheer.mp3" }
+  pid = fork{ exec 'afplay', "audio/new_cheer.wav" }
   # pid = fork{ exec 'killall', "afhplay" }
   # 'afplay audio/cheer.mp3`
 end
@@ -145,8 +144,8 @@ def match
         puts "\n\n\n#{player[:name].blue.bold} won their bet and moves on!"
       else
         sleep(1)
-        puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 5 tokens!"
-        player.update(tokens:(player["tokens"]-20))
+        puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 10 tokens!"
+        player.update(tokens:(player["tokens"]-10))
         if player[:tokens] <= 0
           sleep(1)
           puts "\n\n\n#{player[:name].blue.bold} has no more tokens and has been eliminated from the game!"
