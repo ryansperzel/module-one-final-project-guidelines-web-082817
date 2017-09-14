@@ -3,7 +3,6 @@ require 'colorize'
 require 'colorized_string'
 require 'catpix'
 
-# $p1 = ""
 $players_array = []
 
 
@@ -26,6 +25,7 @@ def create_teams
 end
 
 def welcome
+  binding.pry
   puts "Welcome to the World Cup!".bold
 
   fifa_logo
@@ -59,6 +59,12 @@ end
 def find_team(team)
   team_data.body.find do |team_ob|
     team_ob["title"] == team
+  end
+end
+
+def find_team_by_id(num)
+  team_data.body.find do |team_ob|
+    team_ob["id"] == num
   end
 end
 
@@ -115,18 +121,22 @@ def match
     sleep(1)
     puts "\n\n..."
     sleep(1)
-    puts "\n\n...."
+    puts "\n\n....\n\n"
     sleep(1)
 
     puts word_array.sample
 
     sleep(1)
-    puts "\n\n.."
+    puts "\n\n...."
     sleep(1)
     puts "\n\n..."
     sleep(1)
-    puts "\n\n...."
+    puts "\n\n.."
     sleep(1)
+
+    puts "\n\n#{find_team_by_id(winner)["title"]} won the match!\n\n".bold
+    sleep(1)
+
 
     $players_array.each do |player|
       if outcomes(winners).include?(player[:id])
@@ -135,7 +145,7 @@ def match
       else
         sleep(1)
         puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 5 tokens!"
-        player.update(tokens:(player["tokens"]-20))
+        player.update(tokens:(player["tokens"]-7))
         if player[:tokens] <= 0
           sleep(1)
           puts "\n\n\n#{player[:name].blue.bold} has no more tokens and has been eliminated from the game!"
@@ -147,7 +157,8 @@ def match
       player[:tokens] <= 0
     end
 
-    puts "\n\n\n_________________________________________________________________________\nCURRENT TOTALS:\n\n".bold
+
+    puts "\n\n\n_________________________________________________________________________\nCURRENT TOTALS:\n".bold
 
     total_score
 
@@ -256,6 +267,7 @@ end
 #     :bg_fill => false,
 #     :resolution => "low"
 # end
+
 
 
 
