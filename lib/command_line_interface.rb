@@ -26,6 +26,7 @@ end
 
 def welcome
   binding.pry
+  $players_array.clear
   puts "Welcome to the World Cup!".bold
 
   fifa_logo
@@ -145,7 +146,7 @@ def match
       else
         sleep(1)
         puts "\n\n\n#{player[:name].blue.bold} lost their bet and loses 5 tokens!"
-        player.update(tokens:(player["tokens"]-7))
+        player.update(tokens:(player["tokens"]-20))
         if player[:tokens] <= 0
           sleep(1)
           puts "\n\n\n#{player[:name].blue.bold} has no more tokens and has been eliminated from the game!"
@@ -269,6 +270,15 @@ end
 # end
 
 
+def play_again
+  puts "Play Again?"
+  yn = gets.chomp.downcase
+  if yn == "yes"
+    run
+  else
+    puts "Thanks for playing, Goodbye."
+  end
+end
 
 
 
@@ -289,4 +299,5 @@ def run
   match
   puts "\n\n\n_________________________________________________________________________\n\n\n"
   game_winner
+  play_again
 end
